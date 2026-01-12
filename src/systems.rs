@@ -122,31 +122,31 @@ pub fn spawn_bricks(
 
 pub fn spawn_start_ui(mut commands: Commands) {
     commands
-        .spawn(NodeBundle {
-            style: Style {
-                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                flex_direction: FlexDirection::Column,
+        .spawn((
+            NodeBundle {
+                style: Style {
+                    size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::Center,
+                    flex_direction: FlexDirection::Column,
+                    ..default()
+                },
+                background_color: Color::rgba(0.0, 0.0, 0.0, 0.7).into(),
                 ..default()
             },
-            background_color: Color::rgba(0.0, 0.0, 0.0, 0.7).into(),
-            ..default()
-        })
+            StartUI,
+        ))
         .with_children(|parent| {
-            parent.spawn((
-                TextBundle::from_section(
-                    "BRICK BREAKER",
-                    TextStyle {
-                        font_size: 64.0,
-                        color: Color::WHITE,
-                        ..default()
-                    },
-                ),
-                StartUI,
+            parent.spawn(TextBundle::from_section(
+                "BRICK BREAKER",
+                TextStyle {
+                    font_size: 64.0,
+                    color: Color::WHITE,
+                    ..default()
+                },
             ));
 
-            parent.spawn((
+            parent.spawn(
                 TextBundle::from_section(
                     "PRESS SPACE TO START",
                     TextStyle {
@@ -159,38 +159,37 @@ pub fn spawn_start_ui(mut commands: Commands) {
                     margin: UiRect::top(Val::Px(30.0)),
                     ..default()
                 }),
-                StartUI,
-            ));
+            );
         });
 }
 
 pub fn spawn_game_over_ui(mut commands: Commands, score: Res<Score>) {
     commands
-        .spawn(NodeBundle {
-            style: Style {
-                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                flex_direction: FlexDirection::Column,
+        .spawn((
+            NodeBundle {
+                style: Style {
+                    size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::Center,
+                    flex_direction: FlexDirection::Column,
+                    ..default()
+                },
+                background_color: Color::rgba(0.0, 0.0, 0.0, 0.8).into(),
                 ..default()
             },
-            background_color: Color::rgba(0.0, 0.0, 0.0, 0.8).into(),
-            ..default()
-        })
+            GameOverUI,
+        ))
         .with_children(|parent| {
-            parent.spawn((
-                TextBundle::from_section(
-                    "GAME OVER",
-                    TextStyle {
-                        font_size: 64.0,
-                        color: Color::RED,
-                        ..default()
-                    },
-                ),
-                GameOverUI,
+            parent.spawn(TextBundle::from_section(
+                "GAME OVER",
+                TextStyle {
+                    font_size: 64.0,
+                    color: Color::RED,
+                    ..default()
+                },
             ));
 
-            parent.spawn((
+            parent.spawn(
                 TextBundle::from_section(
                     format!("Final Score: {}", score.value),
                     TextStyle {
@@ -203,10 +202,9 @@ pub fn spawn_game_over_ui(mut commands: Commands, score: Res<Score>) {
                     margin: UiRect::top(Val::Px(30.0)),
                     ..default()
                 }),
-                GameOverUI,
-            ));
+            );
 
-            parent.spawn((
+            parent.spawn(
                 TextBundle::from_section(
                     "PRESS R TO RESTART\nPRESS ESC TO EXIT",
                     TextStyle {
@@ -219,8 +217,7 @@ pub fn spawn_game_over_ui(mut commands: Commands, score: Res<Score>) {
                     margin: UiRect::top(Val::Px(40.0)),
                     ..default()
                 }),
-                GameOverUI,
-            ));
+            );
         });
 }
 
@@ -481,15 +478,15 @@ pub fn paddle_collect_power_up(
 
 pub fn start_game(
     keyboard: Res<Input<KeyCode>>,
-    mut state: ResMut<State<GameState>>,
+    mut next_state: ResMut<NextState<GameState>>,
     mut commands: Commands,
-    ui_query: Query<Entity, With<StartUI>>,
+    ui_query: Query<Entity, (With<StartUI>, Without<Parent>)>,
 ) {
     if keyboard.just_pressed(KeyCode::Space) {
         for e in ui_query.iter() {
-            commands.entity(e).despawn();
+            commands.entity(e).despawn_recursive();
         }
-        state.overwrite(GameState::Playing);
+        next_state.set(GameState::Playing);
     }
 }
 
@@ -507,30 +504,30 @@ pub fn check_game_over(
 
 pub fn handle_game_over(
     mut game_over_events: EventReader<GameOver>,
-    mut state: ResMut<State<GameState>>,
+    mut next_state: ResMut<NextState<GameState>>,
 ) {
     for event in game_over_events.iter() {
         println!("Game Over! Your final score is: {}", event.score);
-        state.overwrite(GameState::GameOver);
+        next_state.set(GameState::GameOver);
     }
 }
 
 pub fn restart_game(
     keyboard: Res<Input<KeyCode>>,
-    mut state: ResMut<State<GameState>>,
+    mut next_state: ResMut<NextState<GameState>>,
     mut commands: Commands,
     mut score: ResMut<Score>,
-    ui_query: Query<Entity, With<GameOverUI>>,
+    ui_query: Query<Entity, (With<GameOverUI>, Without<Parent>)>,
 ) {
     if keyboard.just_pressed(KeyCode::R) {
-        // Despawn UI
+        // Despawn UI (only root nodes, children will be despawned recursively)
         for e in ui_query.iter() {
-            commands.entity(e).despawn();
+            commands.entity(e).despawn_recursive();
         }
         // Reset score
         score.value = 0;
         // Change state to Playing (this will trigger OnEnter and spawn entities)
-        state.overwrite(GameState::Playing);
+        next_state.set(GameState::Playing);
     }
 }
 
