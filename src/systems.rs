@@ -121,126 +121,146 @@ pub fn spawn_bricks(
     }
 }
 
-pub fn spawn_start_ui(mut commands: Commands) {
-    commands
-        .spawn((
-            NodeBundle {
-                style: Style {
-                    size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
-                    flex_direction: FlexDirection::Column,
-                    position_type: PositionType::Absolute,
-                    ..default()
-                },
-                background_color: BackgroundColor(Color::rgba(0.0, 0.0, 0.0, 0.7)),
-                z_index: ZIndex::Local(999),
+pub fn spawn_start_ui(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
+    let window = window_query.get_single().unwrap();
+    
+    println!("=== BRICK BREAKER ===");
+    println!("PRESS SPACE TO START");
+    
+    // Background đen
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::rgba(0.0, 0.0, 0.0, 0.95),
+                custom_size: Some(Vec2::new(window.width(), window.height())),
                 ..default()
             },
-            StartUI,
-        ))
-        .with_children(|parent| {
-            parent.spawn(TextBundle {
-                text: Text::from_section(
-                    "BRICK BREAKER",
-                    TextStyle {
-                        font_size: 64.0,
-                        color: Color::WHITE,
-                        ..default()
-                    },
-                ),
-                style: Style {
-                    margin: UiRect::bottom(Val::Px(20.0)),
-                    ..default()
-                },
+            transform: Transform::from_xyz(0.0, 0.0, 100.0),
+            ..default()
+        },
+        StartUI,
+    ));
+    
+    // Banner tiêu đề - màu xanh dương
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::rgb(0.2, 0.4, 0.8),
+                custom_size: Some(Vec2::new(window.width() * 0.6, 80.0)),
                 ..default()
-            });
-
-            parent.spawn(TextBundle {
-                text: Text::from_section(
-                    "PRESS SPACE TO START",
-                    TextStyle {
-                        font_size: 36.0,
-                        color: Color::YELLOW,
-                        ..default()
-                    },
-                ),
-                style: Style {
-                    margin: UiRect::top(Val::Px(30.0)),
-                    ..default()
-                },
+            },
+            transform: Transform::from_xyz(0.0, 150.0, 101.0),
+            ..default()
+        },
+        StartUI,
+    ));
+    
+    // Nút Start - màu xanh lá
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::rgb(0.2, 0.8, 0.3),
+                custom_size: Some(Vec2::new(300.0, 80.0)),
                 ..default()
-            });
-        });
+            },
+            transform: Transform::from_xyz(0.0, 0.0, 101.0),
+            ..default()
+        },
+        StartUI,
+    ));
+    
+    // Hướng dẫn - màu vàng
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::rgb(0.9, 0.8, 0.2),
+                custom_size: Some(Vec2::new(400.0, 60.0)),
+                ..default()
+            },
+            transform: Transform::from_xyz(0.0, -150.0, 101.0),
+            ..default()
+        },
+        StartUI,
+    ));
 }
 
-pub fn spawn_game_over_ui(mut commands: Commands, score: Res<Score>) {
-    commands
-        .spawn((
-            NodeBundle {
-                style: Style {
-                    size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                    justify_content: JustifyContent::Center,
-                    align_items: AlignItems::Center,
-                    flex_direction: FlexDirection::Column,
-                    position_type: PositionType::Absolute,
-                    ..default()
-                },
-                background_color: BackgroundColor(Color::rgba(0.0, 0.0, 0.0, 0.8)),
-                z_index: ZIndex::Local(999),
+pub fn spawn_game_over_ui(mut commands: Commands, score: Res<Score>, window_query: Query<&Window, With<PrimaryWindow>>) {
+    let window = window_query.get_single().unwrap();
+    
+    println!("=== GAME OVER ===");
+    println!("Final Score: {}", score.value);
+    println!("PRESS R TO RESTART");
+    println!("PRESS ESC TO EXIT");
+    
+    // Background đen
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::rgba(0.0, 0.0, 0.0, 0.95),
+                custom_size: Some(Vec2::new(window.width(), window.height())),
                 ..default()
             },
-            GameOverUI,
-        ))
-        .with_children(|parent| {
-            parent.spawn(TextBundle {
-                text: Text::from_section(
-                    "GAME OVER",
-                    TextStyle {
-                        font_size: 64.0,
-                        color: Color::RED,
-                        ..default()
-                    },
-                ),
-                style: Style {
-                    margin: UiRect::bottom(Val::Px(20.0)),
-                    ..default()
-                },
+            transform: Transform::from_xyz(0.0, 0.0, 100.0),
+            ..default()
+        },
+        GameOverUI,
+    ));
+    
+    // Banner Game Over - màu đỏ
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::rgb(0.8, 0.2, 0.2),
+                custom_size: Some(Vec2::new(window.width() * 0.6, 80.0)),
                 ..default()
-            });
-
-            parent.spawn(TextBundle {
-                text: Text::from_section(
-                    format!("Final Score: {}", score.value),
-                    TextStyle {
-                        font_size: 48.0,
-                        color: Color::WHITE,
-                        ..default()
-                    },
-                ),
-                style: Style {
-                    margin: UiRect::top(Val::Px(30.0)),
-                    ..default()
-                },
+            },
+            transform: Transform::from_xyz(0.0, 150.0, 101.0),
+            ..default()
+        },
+        GameOverUI,
+    ));
+    
+    // Hiển thị điểm - màu trắng
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::rgb(0.9, 0.9, 0.9),
+                custom_size: Some(Vec2::new(350.0, 70.0)),
                 ..default()
-            });
-
-            parent.spawn(TextBundle {
-                text: Text::from_section(
-                    "PRESS R TO RESTART\nPRESS ESC TO EXIT",
-                    TextStyle {
-                        font_size: 32.0,
-                        color: Color::YELLOW,
-                        ..default()
-                    },
-                ),
-                style: Style {
-                    margin: UiRect::top(Val::Px(40.0)),
-                    ..default()
-                },
+            },
+            transform: Transform::from_xyz(0.0, 30.0, 101.0),
+            ..default()
+        },
+        GameOverUI,
+    ));
+    
+    // Nút Restart - màu xanh lá
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::rgb(0.2, 0.8, 0.3),
+                custom_size: Some(Vec2::new(300.0, 70.0)),
                 ..default()
-            });
-        });
+            },
+            transform: Transform::from_xyz(0.0, -100.0, 101.0),
+            ..default()
+        },
+        GameOverUI,
+    ));
+    
+    // Hướng dẫn - màu vàng
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::rgb(0.9, 0.8, 0.2),
+                custom_size: Some(Vec2::new(400.0, 60.0)),
+                ..default()
+            },
+            transform: Transform::from_xyz(0.0, -200.0, 101.0),
+            ..default()
+        },
+        GameOverUI,
+    ));
 }
 
 // ============================================================================
