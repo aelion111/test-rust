@@ -143,8 +143,7 @@ pub fn spawn_start_ui(mut commands: Commands) {
                         color: Color::WHITE,
                         ..default()
                     },
-                )
-                .with_text_alignment(TextAlignment::Center),
+                ),
                 StartUI,
             ));
 
@@ -160,8 +159,7 @@ pub fn spawn_start_ui(mut commands: Commands) {
                 .with_style(Style {
                     margin: UiRect::top(Val::Px(30.0)),
                     ..default()
-                })
-                .with_text_alignment(TextAlignment::Center),
+                }),
                 StartUI,
             ));
         });
@@ -190,8 +188,7 @@ pub fn spawn_game_over_ui(mut commands: Commands, score: Res<Score>) {
                         color: Color::RED,
                         ..default()
                     },
-                )
-                .with_text_alignment(TextAlignment::Center),
+                ),
                 GameOverUI,
             ));
 
@@ -207,8 +204,7 @@ pub fn spawn_game_over_ui(mut commands: Commands, score: Res<Score>) {
                 .with_style(Style {
                     margin: UiRect::top(Val::Px(30.0)),
                     ..default()
-                })
-                .with_text_alignment(TextAlignment::Center),
+                }),
                 GameOverUI,
             ));
 
@@ -224,8 +220,7 @@ pub fn spawn_game_over_ui(mut commands: Commands, score: Res<Score>) {
                 .with_style(Style {
                     margin: UiRect::top(Val::Px(40.0)),
                     ..default()
-                })
-                .with_text_alignment(TextAlignment::Center),
+                }),
                 GameOverUI,
             ));
         });
@@ -488,7 +483,7 @@ pub fn paddle_collect_power_up(
 
 pub fn start_game(
     keyboard: Res<Input<KeyCode>>,
-    mut next_state: ResMut<NextState<GameState>>,
+    mut state: ResMut<State<GameState>>,
     mut commands: Commands,
     ui_query: Query<Entity, With<StartUI>>,
 ) {
@@ -496,7 +491,7 @@ pub fn start_game(
         for e in ui_query.iter() {
             commands.entity(e).despawn_recursive();
         }
-        next_state.set(GameState::Playing);
+        state.set(GameState::Playing).unwrap();
     }
 }
 
@@ -514,17 +509,17 @@ pub fn check_game_over(
 
 pub fn handle_game_over(
     mut game_over_events: EventReader<GameOver>,
-    mut next_state: ResMut<NextState<GameState>>,
+    mut state: ResMut<State<GameState>>,
 ) {
     for event in game_over_events.iter() {
         println!("Game Over! Your final score is: {}", event.score);
-        next_state.set(GameState::GameOver);
+        state.set(GameState::GameOver).unwrap();
     }
 }
 
 pub fn restart_game(
     keyboard: Res<Input<KeyCode>>,
-    mut next_state: ResMut<NextState<GameState>>,
+    mut state: ResMut<State<GameState>>,
     mut commands: Commands,
     mut score: ResMut<Score>,
     ui_query: Query<Entity, With<GameOverUI>>,
@@ -537,7 +532,7 @@ pub fn restart_game(
         // Reset score
         score.value = 0;
         // Change state to Playing (this will trigger OnEnter and spawn entities)
-        next_state.set(GameState::Playing);
+        state.set(GameState::Playing).unwrap();
     }
 }
 

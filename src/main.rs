@@ -18,16 +18,16 @@ fn main() {
         .add_startup_system(spawn_camera)
 
         // ===== START =====
-        .add_system(spawn_start_ui.in_schedule(OnEnter(GameState::Start)))
-        .add_system(start_game.in_set(OnUpdate(GameState::Start)))
+        .add_system(spawn_start_ui.on_enter(GameState::Start))
+        .add_system(start_game.on_update(GameState::Start))
 
         // ===== PLAYING =====
-        .add_system(cleanup_game_entities.in_schedule(OnEnter(GameState::Playing)))
+        .add_system(cleanup_game_entities.on_enter(GameState::Playing))
         .add_systems(
             (spawn_paddle, spawn_ball, spawn_bricks)
-                .in_schedule(OnEnter(GameState::Playing)),
+                .on_enter(GameState::Playing),
         )
-        .add_system(cleanup_game_entities.in_schedule(OnExit(GameState::Playing)))
+        .add_system(cleanup_game_entities.on_exit(GameState::Playing))
         .add_systems(
             (
                 paddle_movement,
@@ -43,12 +43,12 @@ fn main() {
                 update_score,
                 handle_game_over,
             )
-                .in_set(OnUpdate(GameState::Playing)),
+                .on_update(GameState::Playing),
         )
 
         // ===== GAME OVER =====
-        .add_system(spawn_game_over_ui.in_schedule(OnEnter(GameState::GameOver)))
-        .add_system(restart_game.in_set(OnUpdate(GameState::GameOver)))
+        .add_system(spawn_game_over_ui.on_enter(GameState::GameOver))
+        .add_system(restart_game.on_update(GameState::GameOver))
 
         // ===== GLOBAL =====
         .add_system(exit_game)
