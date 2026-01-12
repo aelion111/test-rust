@@ -124,8 +124,7 @@ pub fn spawn_start_ui(mut commands: Commands) {
     commands
         .spawn(NodeBundle {
             style: Style {
-                width: Val::Percent(100.0),
-                height: Val::Percent(100.0),
+                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Center,
                 flex_direction: FlexDirection::Column,
@@ -169,8 +168,7 @@ pub fn spawn_game_over_ui(mut commands: Commands, score: Res<Score>) {
     commands
         .spawn(NodeBundle {
             style: Style {
-                width: Val::Percent(100.0),
-                height: Val::Percent(100.0),
+                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Center,
                 flex_direction: FlexDirection::Column,
@@ -491,7 +489,7 @@ pub fn start_game(
         for e in ui_query.iter() {
             commands.entity(e).despawn();
         }
-        state.set(GameState::Playing).unwrap();
+        state.overwrite(GameState::Playing);
     }
 }
 
@@ -513,7 +511,7 @@ pub fn handle_game_over(
 ) {
     for event in game_over_events.iter() {
         println!("Game Over! Your final score is: {}", event.score);
-        state.set(GameState::GameOver).unwrap();
+        state.overwrite(GameState::GameOver);
     }
 }
 
@@ -532,7 +530,7 @@ pub fn restart_game(
         // Reset score
         score.value = 0;
         // Change state to Playing (this will trigger OnEnter and spawn entities)
-        state.set(GameState::Playing).unwrap();
+        state.overwrite(GameState::Playing);
     }
 }
 

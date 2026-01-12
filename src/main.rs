@@ -28,23 +28,18 @@ fn main() {
                 .in_schedule(OnEnter(GameState::Playing)),
         )
         .add_system(cleanup_game_entities.in_schedule(OnExit(GameState::Playing)))
-        .add_systems(
-            (
-                paddle_movement,
-                ball_movement,
-                confine_paddle,
-                confine_ball,
-                update_ball_direction,
-                ball_brick_collision,
-                ball_paddle_collision,
-                power_up_fall,
-                paddle_collect_power_up,
-                check_game_over,
-                update_score,
-                handle_game_over,
-            )
-                .run_if(in_state(GameState::Playing)),
-        )
+        .add_system(paddle_movement.run_if(in_state(GameState::Playing)))
+        .add_system(ball_movement.run_if(in_state(GameState::Playing)))
+        .add_system(confine_paddle.run_if(in_state(GameState::Playing)))
+        .add_system(confine_ball.run_if(in_state(GameState::Playing)))
+        .add_system(update_ball_direction.run_if(in_state(GameState::Playing)))
+        .add_system(ball_brick_collision.run_if(in_state(GameState::Playing)))
+        .add_system(ball_paddle_collision.run_if(in_state(GameState::Playing)))
+        .add_system(power_up_fall.run_if(in_state(GameState::Playing)))
+        .add_system(paddle_collect_power_up.run_if(in_state(GameState::Playing)))
+        .add_system(check_game_over.run_if(in_state(GameState::Playing)))
+        .add_system(update_score.run_if(in_state(GameState::Playing)))
+        .add_system(handle_game_over.run_if(in_state(GameState::Playing)))
 
         // ===== GAME OVER =====
         .add_system(spawn_game_over_ui.in_schedule(OnEnter(GameState::GameOver)))
