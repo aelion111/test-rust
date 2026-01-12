@@ -32,6 +32,7 @@ pub struct PowerUp {}
 // ============================================================================
 
 pub fn spawn_camera(mut commands: Commands) {
+    // Spawn camera for 2D sprites
     commands.spawn(Camera2dBundle::default());
 }
 
@@ -129,37 +130,47 @@ pub fn spawn_start_ui(mut commands: Commands) {
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
                     flex_direction: FlexDirection::Column,
+                    position_type: PositionType::Absolute,
                     ..default()
                 },
-                background_color: Color::rgba(0.0, 0.0, 0.0, 0.7).into(),
+                background_color: BackgroundColor(Color::rgba(0.0, 0.0, 0.0, 0.7)),
+                z_index: ZIndex::Local(999),
                 ..default()
             },
             StartUI,
         ))
         .with_children(|parent| {
-            parent.spawn(TextBundle::from_section(
-                "BRICK BREAKER",
-                TextStyle {
-                    font_size: 64.0,
-                    color: Color::WHITE,
+            parent.spawn(TextBundle {
+                text: Text::from_section(
+                    "BRICK BREAKER",
+                    TextStyle {
+                        font_size: 64.0,
+                        color: Color::WHITE,
+                        ..default()
+                    },
+                ),
+                style: Style {
+                    margin: UiRect::bottom(Val::Px(20.0)),
                     ..default()
                 },
-            ));
+                ..default()
+            });
 
-            parent.spawn(
-                TextBundle::from_section(
+            parent.spawn(TextBundle {
+                text: Text::from_section(
                     "PRESS SPACE TO START",
                     TextStyle {
                         font_size: 36.0,
                         color: Color::YELLOW,
                         ..default()
                     },
-                )
-                .with_style(Style {
+                ),
+                style: Style {
                     margin: UiRect::top(Val::Px(30.0)),
                     ..default()
-                }),
-            );
+                },
+                ..default()
+            });
         });
 }
 
@@ -172,52 +183,63 @@ pub fn spawn_game_over_ui(mut commands: Commands, score: Res<Score>) {
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
                     flex_direction: FlexDirection::Column,
+                    position_type: PositionType::Absolute,
                     ..default()
                 },
-                background_color: Color::rgba(0.0, 0.0, 0.0, 0.8).into(),
+                background_color: BackgroundColor(Color::rgba(0.0, 0.0, 0.0, 0.8)),
+                z_index: ZIndex::Local(999),
                 ..default()
             },
             GameOverUI,
         ))
         .with_children(|parent| {
-            parent.spawn(TextBundle::from_section(
-                "GAME OVER",
-                TextStyle {
-                    font_size: 64.0,
-                    color: Color::RED,
+            parent.spawn(TextBundle {
+                text: Text::from_section(
+                    "GAME OVER",
+                    TextStyle {
+                        font_size: 64.0,
+                        color: Color::RED,
+                        ..default()
+                    },
+                ),
+                style: Style {
+                    margin: UiRect::bottom(Val::Px(20.0)),
                     ..default()
                 },
-            ));
+                ..default()
+            });
 
-            parent.spawn(
-                TextBundle::from_section(
+            parent.spawn(TextBundle {
+                text: Text::from_section(
                     format!("Final Score: {}", score.value),
                     TextStyle {
                         font_size: 48.0,
                         color: Color::WHITE,
                         ..default()
                     },
-                )
-                .with_style(Style {
+                ),
+                style: Style {
                     margin: UiRect::top(Val::Px(30.0)),
                     ..default()
-                }),
-            );
+                },
+                ..default()
+            });
 
-            parent.spawn(
-                TextBundle::from_section(
+            parent.spawn(TextBundle {
+                text: Text::from_section(
                     "PRESS R TO RESTART\nPRESS ESC TO EXIT",
                     TextStyle {
                         font_size: 32.0,
                         color: Color::YELLOW,
                         ..default()
                     },
-                )
-                .with_style(Style {
+                ),
+                style: Style {
                     margin: UiRect::top(Val::Px(40.0)),
                     ..default()
-                }),
-            );
+                },
+                ..default()
+            });
         });
 }
 
