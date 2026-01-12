@@ -489,7 +489,7 @@ pub fn start_game(
 ) {
     if keyboard.just_pressed(KeyCode::Space) {
         for e in ui_query.iter() {
-            commands.entity(e).despawn_recursive();
+            commands.entity(e).despawn();
         }
         state.set(GameState::Playing).unwrap();
     }
@@ -527,7 +527,7 @@ pub fn restart_game(
     if keyboard.just_pressed(KeyCode::R) {
         // Despawn UI
         for e in ui_query.iter() {
-            commands.entity(e).despawn_recursive();
+            commands.entity(e).despawn();
         }
         // Reset score
         score.value = 0;
@@ -548,16 +548,16 @@ pub fn cleanup_game_entities(
     power_up_query: Query<Entity, With<PowerUp>>,
 ) {
     for entity in paddle_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
     for entity in ball_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
     for entity in brick_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
     for entity in power_up_query.iter() {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }
 
